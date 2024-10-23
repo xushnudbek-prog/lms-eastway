@@ -1,0 +1,25 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  application:
+    file:
+      uploads:
+        photos-output-path: ./uploads
+    security:
+      jwt:
+        secret-key: FFDC077B90F9AB9E8DF23874B4F963E955352E28DB49F2702DAE710FA407586D
+        expiration: 86400000
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eastway_lms
+    username: postgres
+    password: 0909
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql

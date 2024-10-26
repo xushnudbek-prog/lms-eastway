@@ -26,7 +26,6 @@ public class Courses {
     @NotBlank(message = "Description is required")
     private String description;
 
-    @NotBlank(message = "Media URL is required")
     @Column(name = "media_url")
     private String mediaUrl;
 

@@ -13,6 +13,7 @@ import uz.eastwaysolutions.lms.eastwaylms.entity.User;
 import uz.eastwaysolutions.lms.eastwaylms.repository.CoursesRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -36,12 +37,50 @@ public class CourseService {
         if(user.getRole().equals(Role.ADMIN)){
             courses.setTitle(coursesDto.getTitle());
             courses.setDescription(coursesDto.getDescription());
+            courses.setMediaUrl(coursesDto.getMediaUrl());
             courses.setCreatedBy(user.getId());
             coursesRepository.save(courses);
         }else{
             return "User can not create Course";
         }
         return "Course added successfully";
+    }
+    @Transactional
+    public String updateCourse(Long courseId, CoursesDto coursesDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
 
+        if (!user.getRole().equals(Role.ADMIN)) {
+            return "User is not authorized to update Course";
+        }
+
+        Optional<Courses> existingCourse = coursesRepository.findById(courseId);
+        if (existingCourse.isPresent()) {
+            Courses courseToUpdate = existingCourse.get();
+            courseToUpdate.setTitle(coursesDto.getTitle());
+            courseToUpdate.setDescription(coursesDto.getDescription());
+            courseToUpdate.setMediaUrl(coursesDto.getMediaUrl());
+            coursesRepository.save(courseToUpdate);
+            return "Course updated successfully";
+        } else {
+            return "Course not found";
+        }
+    }
+
+    @Transactional
+    public String deleteCourse(Long courseId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+
+        if (!user.getRole().equals(Role.ADMIN)) {
+            return "User is not authorized to delete Course";
+        }
+
+        if (coursesRepository.existsById(courseId)) {
+            coursesRepository.deleteById(courseId);
+            return "Course deleted successfully";
+        } else {
+            return "Course not found";
+        }
     }
 }

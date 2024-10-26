@@ -43,5 +43,33 @@ public class CourseController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
         }
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/admin/courses/{id}")
+    public ResponseEntity<String> updateCourse(@PathVariable Long id, @Valid @RequestBody CoursesDto coursesDto) {
+        String result = courseService.updateCourse(id, coursesDto);
+
+        if (result.equals("Course updated successfully")) {
+            return ResponseEntity.ok(result);
+        } else if (result.equals("Course not found")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/admin/courses/{id}")
+    public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
+        String result = courseService.deleteCourse(id);
+
+        if (result.equals("Course deleted successfully")) {
+            return ResponseEntity.ok(result);
+        } else if (result.equals("Course not found")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
+        }
+    }
 }
 

@@ -1,5 +1,6 @@
 package uz.eastwaysolutions.lms.eastwaylms.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import uz.eastwaysolutions.lms.eastwaylms.service.AuthService;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication APIs")
 public class AuthController {
 
     private final AuthService service;

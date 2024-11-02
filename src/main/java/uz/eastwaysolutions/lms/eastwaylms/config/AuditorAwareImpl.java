@@ -15,7 +15,7 @@ public class AuditorAwareImpl implements AuditorAware<Long> {
 
         if (authentication == null ||
                 !authentication.isAuthenticated() ||
-        authentication instanceof AnonymousAuthenticationToken) {
+                authentication instanceof AnonymousAuthenticationToken) {
             return Optional.empty();
         }
         User user = (User) authentication.getPrincipal();

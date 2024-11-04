@@ -32,4 +32,6 @@ public class Courses {
     @Column(name = "created_by")
     private Long createdBy;
 
+
+
 }

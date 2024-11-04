@@ -1,12 +1,16 @@
 package uz.eastwaysolutions.lms.eastwaylms.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -31,6 +35,12 @@ public class Courses {
 
     @Column(name = "created_by")
     private Long createdBy;
+
+    @ManyToMany(mappedBy = "courses")
+    @JsonBackReference
+    private Set<User> users = new HashSet<>();
+
+
 
 
 

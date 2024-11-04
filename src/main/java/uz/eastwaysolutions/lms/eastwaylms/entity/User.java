@@ -1,6 +1,7 @@
 package uz.eastwaysolutions.lms.eastwaylms.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,8 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 @Entity(name = "_user")
 @Getter
@@ -34,6 +34,27 @@ public class User implements Serializable, UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_courses",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    @JsonManagedReference
+    private Set<Courses> courses = new HashSet<>();
+
+
+    public void addCourse(Courses course) {
+        courses.add(course);
+        course.getUsers().add(this);
+    }
+
+    public void removeCourse(Courses course) {
+        courses.remove(course);
+        course.getUsers().remove(this);
+    }
+
 
     @CreatedDate
     @Column(updatable = false)

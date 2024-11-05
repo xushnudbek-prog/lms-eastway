@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import uz.eastwaysolutions.lms.eastwaylms.dto.courses.CoursesDto;
 
 import uz.eastwaysolutions.lms.eastwaylms.entity.Courses;
+import uz.eastwaysolutions.lms.eastwaylms.entity.User;
 import uz.eastwaysolutions.lms.eastwaylms.service.CourseService;
 
 import java.util.List;
@@ -70,6 +71,12 @@ public class CourseController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
         }
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/user-count/{courseId}")
+    public ResponseEntity<List<User>> getUserCountForCourse(@PathVariable Long courseId) {
+        List<User> userCountForCourse = courseService.getUserCountForCourse(courseId);
+        return ResponseEntity.ok(userCountForCourse);
     }
 }
 

@@ -42,7 +42,11 @@ public class User implements Serializable, UserDetails {
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
     @JsonManagedReference
-    private Set<Courses> courses = new HashSet<>();
+    private List<Courses> courses = new ArrayList<>();
+
+    public List<Courses> getCourses() {
+        return courses;
+    }
 
 
     public void addCourse(Courses course) {

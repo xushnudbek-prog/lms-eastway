@@ -9,8 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 
 @Entity
 @Getter
@@ -38,9 +38,11 @@ public class Courses {
 
     @ManyToMany(mappedBy = "courses")
     @JsonBackReference
-    private Set<User> users = new HashSet<>();
+    private List<User> users = new ArrayList<>();
 
-
+    public List<User> getUsers() {
+        return users;
+    }
 
 
 

@@ -13,6 +13,8 @@ import uz.eastwaysolutions.lms.eastwaylms.exception.ResourceNotFoundException;
 import uz.eastwaysolutions.lms.eastwaylms.repository.CoursesRepository;
 import uz.eastwaysolutions.lms.eastwaylms.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 public class UserServiceForCRUD {
 
@@ -54,6 +56,14 @@ public class UserServiceForCRUD {
 
         user.removeCourse(course);
         userRepository.save(user);
+    }
+
+    public List<Courses> getUserCourses(Long userId){
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return user.getCourses();
     }
 
 

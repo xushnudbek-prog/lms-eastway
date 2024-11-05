@@ -10,6 +10,7 @@ import uz.eastwaysolutions.lms.eastwaylms.dto.courses.CoursesDto;
 import uz.eastwaysolutions.lms.eastwaylms.entity.Courses;
 import uz.eastwaysolutions.lms.eastwaylms.entity.Role;
 import uz.eastwaysolutions.lms.eastwaylms.entity.User;
+import uz.eastwaysolutions.lms.eastwaylms.exception.ResourceNotFoundException;
 import uz.eastwaysolutions.lms.eastwaylms.repository.CoursesRepository;
 
 import java.util.List;
@@ -82,5 +83,13 @@ public class CourseService {
         } else {
             return "Course not found";
         }
+    }
+
+    public List<User> getUserCountForCourse(Long courseId) {
+
+        Courses course = coursesRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+
+        return course.getUsers();
     }
 }

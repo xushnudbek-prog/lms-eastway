@@ -1,6 +1,7 @@
 package uz.eastwaysolutions.lms.eastwaylms.service;
 
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,8 @@ import uz.eastwaysolutions.lms.eastwaylms.entity.User;
 import uz.eastwaysolutions.lms.eastwaylms.exception.ResourceNotFoundException;
 import uz.eastwaysolutions.lms.eastwaylms.repository.CoursesRepository;
 import uz.eastwaysolutions.lms.eastwaylms.repository.UserRepository;
+
+import java.util.List;
 
 @Service
 public class UserServiceForCRUD {
@@ -54,6 +57,11 @@ public class UserServiceForCRUD {
 
         user.removeCourse(course);
         userRepository.save(user);
+    }
+
+    public List<Courses> getUserCourses(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return user.getCourses();
     }
 
 

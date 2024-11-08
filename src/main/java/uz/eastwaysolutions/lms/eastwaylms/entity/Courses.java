@@ -38,16 +38,10 @@ public class Courses {
     @Column(name = "created_by")
     private Long createdBy;
 
+    @Getter
     @ManyToMany(mappedBy = "courses")
     @JsonBackReference
     private List<User> users = new ArrayList<>();
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-
-
 
 
 }

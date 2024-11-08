@@ -21,10 +21,10 @@ public class AuthController {
     private final AuthService service;
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<?> register(@RequestBody @Valid RegistrationRequest request) {
         service.register(request);
-        return ResponseEntity.accepted().build();
+        return ResponseEntity.noContent().build();
     }
     @PostMapping(value = "/authenticate", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthResponse> authenticate(

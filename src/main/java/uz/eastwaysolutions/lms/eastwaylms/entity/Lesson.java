@@ -29,6 +29,7 @@ public class Lesson implements Serializable {
     private String title;
     private String description;
 
+
     @ManyToOne
     @JoinColumn(name = "module_id")
     @JsonBackReference

@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Courses implements Serializable {
+public class Modules implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,13 +29,14 @@ public class Courses implements Serializable {
     private String title;
     private String description;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<Modules> modules = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "courses")
+    @ManyToOne
+    @JoinColumn(name = "course_id")
     @JsonBackReference
-    private List<User> users = new ArrayList<>();
+    private Courses course;
+
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Lesson> lessons = new ArrayList<>();
 
     @CreatedDate
     @Column(updatable = false)
@@ -43,14 +44,4 @@ public class Courses implements Serializable {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
-    public void addModule(Modules module) {
-        modules.add(module);
-        module.setCourse(this);
-    }
-
-    public void removeModule(Modules module) {
-        modules.remove(module);
-        module.setCourse(null);
-    }
 }

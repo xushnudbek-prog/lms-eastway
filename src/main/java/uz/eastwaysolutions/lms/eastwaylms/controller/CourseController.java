@@ -26,59 +26,15 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/admin/courses/getAll")
-    public ResponseEntity<List<Courses>> getAllCourses() {
-        List<Courses> coursesList = courseService.getAllCourses();
-        return ResponseEntity.ok(coursesList);
-    }
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/courses/add")
-    public ResponseEntity<String> createCourse(@Valid @RequestBody CoursesDto coursesDto) {
-        String result = courseService.addCourse(coursesDto);
-
-        if (result.equals("Course added successfully")) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(result);
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
-        }
+    @PostMapping("/admin/courses/create")
+    public ResponseEntity<Long> createCourse(@Valid @RequestBody CoursesDto coursesDto) {
+        courseService.createCourse(coursesDto);
+       return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/admin/courses/{id}")
-    public ResponseEntity<String> updateCourse(@PathVariable Long id, @Valid @RequestBody CoursesDto coursesDto) {
-        String result = courseService.updateCourse(id, coursesDto);
 
-        if (result.equals("Course updated successfully")) {
-            return ResponseEntity.ok(result);
-        } else if (result.equals("Course not found")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
-        }
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/admin/courses/{id}")
-    public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
-        String result = courseService.deleteCourse(id);
-
-        if (result.equals("Course deleted successfully")) {
-            return ResponseEntity.ok(result);
-        } else if (result.equals("Course not found")) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
-        }
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/usersForCourse/{userId}")
-    public ResponseEntity<List<User>> getUserCourses(@PathVariable Long userId){
-        List<User> courseUsers = courseService.getCourseUsers(userId);
-
-        return ResponseEntity.ok(courseUsers);
-    }
 }
 

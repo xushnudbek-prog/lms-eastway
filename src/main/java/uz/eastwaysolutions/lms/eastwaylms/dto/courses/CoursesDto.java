@@ -20,6 +20,5 @@ public class CoursesDto implements Serializable {
     private String title;
     @NotBlank(message = "Description is required")
     private String description;
-    @NotBlank(message = "Media URL is required")
-    private String mediaUrl;
+
 }

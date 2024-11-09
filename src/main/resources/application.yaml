@@ -13,7 +13,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/eastway_lms
     username: postgres
-    password: 0909
+    password: 111
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

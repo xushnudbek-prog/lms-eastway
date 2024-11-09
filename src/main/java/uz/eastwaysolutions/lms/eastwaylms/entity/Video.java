@@ -36,6 +36,7 @@ public class Video implements Serializable {
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+
     @LastModifiedDate
     private LocalDateTime updatedAt;
 }

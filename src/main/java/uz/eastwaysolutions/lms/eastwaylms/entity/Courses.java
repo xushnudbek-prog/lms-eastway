@@ -33,6 +33,7 @@ public class Courses implements Serializable {
     @JsonManagedReference
     private List<Modules> modules = new ArrayList<>();
 
+
     @ManyToMany(mappedBy = "courses")
     @JsonBackReference
     private List<User> users = new ArrayList<>();

@@ -1,20 +1,32 @@
 spring:
+  aws:
+    s3:
+      bucket-name: eastway
+      region: eu-north-1
+      access-key: ACCESS_KEY
+      secret-key: SECRET_KEY
+
   servlet:
     multipart:
-      max-file-size: 10MB
+      max-file-size: 50MB
+      max-request-size: 50MB
+
   application:
     file:
       uploads:
         photos-output-path: ./uploads
+
     security:
       jwt:
         secret-key: FFDC077B90F9AB9E8DF23874B4F963E955352E28DB49F2702DAE710FA407586D
         expiration: 86400000
+
   datasource:
     url: jdbc:postgresql://localhost:5432/eastway_lms
     username: postgres
     password: 111
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,3 +35,6 @@ spring:
       hibernate:
         format_sql: true
     database: postgresql
+
+
+

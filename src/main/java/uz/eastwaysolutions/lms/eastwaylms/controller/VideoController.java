@@ -1,13 +1,19 @@
 package uz.eastwaysolutions.lms.eastwaylms.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import uz.eastwaysolutions.lms.eastwaylms.dto.video.VideoDto;
 import uz.eastwaysolutions.lms.eastwaylms.entity.Video;
 import uz.eastwaysolutions.lms.eastwaylms.service.VideoService;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,25 +21,29 @@ import java.util.Optional;
 @RequestMapping("/api/videos")
 public class VideoController {
 
+
     private final VideoService videoService;
 
     public VideoController(VideoService videoService) {
         this.videoService = videoService;
     }
 
-
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create/{lessonId}")
-    public ResponseEntity<Video> createVideo(
-            @PathVariable @RequestParam(required = false) Long lessonId,
-            @RequestBody VideoDto videoDto) {
-        Video createdVideo = videoService.createVideo(lessonId, videoDto);
-        return new ResponseEntity<>(createdVideo, HttpStatus.CREATED);
+    @PostMapping(value = "/create/{lessonId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createVideo(
+            @PathVariable Long lessonId,
+            @Parameter @RequestParam String title,
+            @Parameter @RequestParam String duration,
+            @RequestPart("file") MultipartFile file) {
+
+        VideoDto videoDto = new VideoDto(title, duration);
+        Video video = videoService.createVideo(lessonId, videoDto, file);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Video created successfully with ID: " + video.getId());
     }
 
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @GetMapping("/all")
+    @GetMapping("/getAll")
     public ResponseEntity<List<Video>> getAllVideos() {
         List<Video> videos = videoService.getAllVideos();
         return ResponseEntity.ok(videos);
@@ -41,7 +51,7 @@ public class VideoController {
 
 
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    @GetMapping("/{videoId}")
+    @GetMapping("/getVideoById/{videoId}")
     public ResponseEntity<Video> getVideoById(@PathVariable Long videoId) {
         Optional<Video> video = videoService.getVideoById(videoId);
         return video.map(ResponseEntity::ok)
@@ -50,14 +60,17 @@ public class VideoController {
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/update/{videoId}")
+    @PutMapping("/{videoId}/{lessonId}")
     public ResponseEntity<Video> updateVideo(
             @PathVariable Long videoId,
-            @RequestParam(required = false) Long lessonId,
-            @RequestBody VideoDto videoDto) {
+            @PathVariable Long lessonId,
+            @Parameter @RequestParam String title,
+            @Parameter @RequestParam String duration,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
-        Video updatedVideo = videoService.updateVideo(videoId, lessonId, videoDto);
-        return ResponseEntity.ok(updatedVideo);
+        VideoDto videoDto = new VideoDto(title, duration);
+        Video video = videoService.updateVideo(videoId, lessonId, videoDto, file);
+        return new ResponseEntity<>(video, HttpStatus.OK);
     }
 
 
@@ -66,5 +79,20 @@ public class VideoController {
     public ResponseEntity<Void> deleteVideo(@PathVariable Long videoId) {
         videoService.deleteVideo(videoId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @GetMapping("/download/{videoId}")
+    public ResponseEntity<byte[]> downloadVideo(@PathVariable Long videoId) throws IOException {
+        InputStream videoInputStream = videoService.downloadVideo(videoId);
+
+        byte[] videoBytes = videoInputStream.readAllBytes();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=video.mp4");
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(videoBytes.length));
+
+        return new ResponseEntity<>(videoBytes, headers, HttpStatus.OK);
     }
 }

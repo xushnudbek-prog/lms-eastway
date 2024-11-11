@@ -24,11 +24,9 @@ public class VideoController {
 
 
     private final VideoService videoService;
-    private final S3Service s3Service;
 
-    public VideoController(VideoService videoService, S3Service s3Service) {
+    public VideoController(VideoService videoService) {
         this.videoService = videoService;
-        this.s3Service = s3Service;
     }
 
     @PreAuthorize("hasRole('ADMIN')")

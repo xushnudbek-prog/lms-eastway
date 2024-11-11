@@ -1,4 +1,11 @@
 spring:
+  aws:
+    s3:
+      bucket-name: eastway
+      region: eu-north-1
+      access-key: ACCESS_KEY
+      secret-key: SECRET_KEY
+
   servlet:
     multipart:
       max-file-size: 50MB
@@ -28,13 +35,6 @@ spring:
       hibernate:
         format_sql: true
     database: postgresql
-
-aws:
-  s3:
-    bucket-name: eastway
-    region: eu-north-1
-    access-key: ACCESS_KEY
-    secret-key: SECRET_KEY
 
 
 

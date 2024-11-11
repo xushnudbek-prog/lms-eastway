@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uz.eastwaysolutions.lms.eastwaylms.dto.video.VideoDto;
 import uz.eastwaysolutions.lms.eastwaylms.entity.Video;
-import uz.eastwaysolutions.lms.eastwaylms.service.S3Service;
 import uz.eastwaysolutions.lms.eastwaylms.service.VideoService;
 
 import java.io.IOException;

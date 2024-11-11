@@ -17,5 +17,4 @@ import java.io.Serializable;
 public class VideoDto implements Serializable {
     private String title;
     private String duration;
-    private String url;
 }

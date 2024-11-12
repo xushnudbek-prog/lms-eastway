@@ -1,6 +1,10 @@
 package uz.eastwaysolutions.lms.eastwaylms.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,20 +25,25 @@ import java.util.Optional;
 @RequestMapping("/api/videos")
 public class VideoController {
 
-
     private final VideoService videoService;
 
     public VideoController(VideoService videoService) {
         this.videoService = videoService;
     }
 
+    @Operation(summary = "Create a Video", description = "Uploads a video and associates it with a specific lesson. Admin access required.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Video created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Lesson not found", content = @Content)
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/create/{lessonId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createVideo(
-            @PathVariable Long lessonId,
-            @Parameter @RequestParam String title,
-            @Parameter @RequestParam String duration,
-            @RequestPart("file") MultipartFile file) {
+            @Parameter(description = "ID of the lesson to associate the video with", required = true) @PathVariable Long lessonId,
+            @Parameter(description = "Title of the video") @RequestParam String title,
+            @Parameter(description = "Duration of the video in format HH:mm:ss") @RequestParam String duration,
+            @Parameter(description = "Video file to upload", required = true) @RequestPart("file") MultipartFile file) {
 
         VideoDto videoDto = new VideoDto(title, duration);
         Video video = videoService.createVideo(lessonId, videoDto, file);
@@ -42,6 +51,10 @@ public class VideoController {
     }
 
 
+    @Operation(summary = "Get All Videos", description = "Retrieves a list of all videos. Accessible by Admin and User roles.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of videos retrieved successfully")
+    })
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/getAll")
     public ResponseEntity<List<Video>> getAllVideos() {
@@ -50,23 +63,34 @@ public class VideoController {
     }
 
 
+    @Operation(summary = "Get Video by ID", description = "Retrieves a video by its ID. Accessible by Admin and User roles.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Video retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Video not found", content = @Content)
+    })
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/getVideoById/{videoId}")
-    public ResponseEntity<Video> getVideoById(@PathVariable Long videoId) {
+    public ResponseEntity<Video> getVideoById(
+            @Parameter(description = "ID of the video to retrieve", required = true) @PathVariable Long videoId) {
         Optional<Video> video = videoService.getVideoById(videoId);
         return video.map(ResponseEntity::ok)
                 .orElseThrow(() -> new RuntimeException("Video not found with id: " + videoId));
     }
 
 
+    @Operation(summary = "Update a Video", description = "Updates video information and optionally replaces the video file. Admin access required.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Video updated successfully"),
+            @ApiResponse(responseCode = "404", description = "Video or lesson not found", content = @Content)
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{videoId}/{lessonId}")
     public ResponseEntity<Video> updateVideo(
-            @PathVariable Long videoId,
-            @PathVariable Long lessonId,
-            @Parameter @RequestParam String title,
-            @Parameter @RequestParam String duration,
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @Parameter(description = "ID of the video to update", required = true) @PathVariable Long videoId,
+            @Parameter(description = "ID of the lesson to associate the video with", required = true) @PathVariable Long lessonId,
+            @Parameter(description = "Updated title of the video") @RequestParam String title,
+            @Parameter(description = "Updated duration of the video") @RequestParam String duration,
+            @Parameter(description = "New video file", required = false) @RequestPart(value = "file", required = false) MultipartFile file) {
 
         VideoDto videoDto = new VideoDto(title, duration);
         Video video = videoService.updateVideo(videoId, lessonId, videoDto, file);
@@ -74,18 +98,30 @@ public class VideoController {
     }
 
 
+    @Operation(summary = "Delete a Video", description = "Deletes a video by its ID. Admin access required.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Video deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Video not found", content = @Content)
+    })
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{videoId}")
-    public ResponseEntity<Void> deleteVideo(@PathVariable Long videoId) {
+    public ResponseEntity<Void> deleteVideo(
+            @Parameter(description = "ID of the video to delete", required = true) @PathVariable Long videoId) {
         videoService.deleteVideo(videoId);
         return ResponseEntity.noContent().build();
     }
 
+
+    @Operation(summary = "Download Video", description = "Downloads the video file. Accessible by Admin and User roles.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Video file downloaded successfully"),
+            @ApiResponse(responseCode = "404", description = "Video not found", content = @Content)
+    })
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @GetMapping("/download/{videoId}")
-    public ResponseEntity<byte[]> downloadVideo(@PathVariable Long videoId) throws IOException {
+    public ResponseEntity<byte[]> downloadVideo(
+            @Parameter(description = "ID of the video to download", required = true) @PathVariable Long videoId) throws IOException {
         InputStream videoInputStream = videoService.downloadVideo(videoId);
-
         byte[] videoBytes = videoInputStream.readAllBytes();
 
         HttpHeaders headers = new HttpHeaders();

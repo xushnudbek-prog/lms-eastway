@@ -16,7 +16,7 @@ public class S3Service {
 
     private final S3Client s3Client;
 
-    @Value("${aws.s3.bucket-name}")
+    @Value("${spring.aws.s3.bucket-name}")
     private String bucketName;
 
     public String uploadFile(String key, InputStream inputStream, long contentLength, String contentType) {

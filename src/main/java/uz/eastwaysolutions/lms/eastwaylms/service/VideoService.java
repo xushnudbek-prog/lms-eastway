@@ -24,7 +24,7 @@ public class VideoService {
     private final S3Service s3Service;
 
 
-    @Value("${aws.s3.bucket-name}")
+    @Value("${spring.aws.s3.bucket-name}")
     private String bucketName;
 
     public VideoService(VideoRepository videoRepository, LessonRepository lessonRepository, S3Service s3Service) {

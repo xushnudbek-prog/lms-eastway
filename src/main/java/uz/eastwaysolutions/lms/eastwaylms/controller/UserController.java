@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.eastwaysolutions.lms.eastwaylms.dto.user.UpdatePasswordRequest;
 import uz.eastwaysolutions.lms.eastwaylms.dto.user.UpdateUserInfoRequest;
+import uz.eastwaysolutions.lms.eastwaylms.dto.user.UserProfileDto;
 import uz.eastwaysolutions.lms.eastwaylms.entity.Courses;
 import uz.eastwaysolutions.lms.eastwaylms.service.UserServiceForCRUD;
 import uz.eastwaysolutions.lms.eastwaylms.service.user.UserService;
@@ -96,5 +97,16 @@ public class UserController {
             @Parameter(description = "ID of the user whose courses are to be retrieved", required = true) @PathVariable Long userId) {
         List<Courses> userCourses = userServiceForCRUD.getUserCourses(userId);
         return ResponseEntity.ok(userCourses);
+    }
+    @Operation(summary = "Get User's profile info", description = "Returns user's data according to registered session.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully returned user's data from current session"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized request")
+    })
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileDto> fetchUserProfile() {
+        UserProfileDto userProfileDto = userService.fetchUserProfile();
+        return ResponseEntity.ok(userProfileDto);
     }
 }

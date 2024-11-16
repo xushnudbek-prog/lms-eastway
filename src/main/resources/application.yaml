@@ -3,8 +3,9 @@ spring:
     s3:
       bucket-name: eastway
       region: eu-north-1
-      access-key: ACCESS_KEY
-      secret-key: SECRET_KEY
+      access-key: 2
+      secret-key: 1
+
 
   servlet:
     multipart:

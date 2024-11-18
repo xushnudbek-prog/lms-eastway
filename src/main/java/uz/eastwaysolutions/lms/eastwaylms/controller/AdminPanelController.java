@@ -2,12 +2,11 @@ package uz.eastwaysolutions.lms.eastwaylms.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import uz.eastwaysolutions.lms.eastwaylms.dto.user.UserProfileDto;
-import uz.eastwaysolutions.lms.eastwaylms.entity.Notification;
 import uz.eastwaysolutions.lms.eastwaylms.service.NotificationService;
 import uz.eastwaysolutions.lms.eastwaylms.service.user.UserService;
 
@@ -17,7 +16,6 @@ import uz.eastwaysolutions.lms.eastwaylms.service.user.UserService;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminPanelController {
     private final UserService userService;
-    private final SimpMessagingTemplate messagingTemplate;
     private final NotificationService notificationService;
 
     @GetMapping("/users")
@@ -38,11 +36,12 @@ public class AdminPanelController {
     }
 
     @PostMapping("/notification/send")
-    public String sendNotification(@RequestParam Long userId, @RequestParam String message) {
-        Notification notification = new Notification(userId, message);
-        notificationService.saveNotification(notification);
-
-        messagingTemplate.convertAndSend("/topic/notifications/" + userId, notification);
-        return "Notification sent to user " + userId;
+    public ResponseEntity<String> sendNotification(@RequestParam Long userId, @RequestParam String message) {
+        try {
+            notificationService.sendNotification(userId, message);
+            return ResponseEntity.ok("Notification sent successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send notification: " + e.getMessage());
+        }
     }
 }

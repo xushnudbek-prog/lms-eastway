@@ -44,6 +44,9 @@ public class User implements Serializable, UserDetails {
     @JsonManagedReference
     private List<Courses> courses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Notification> notifications = new ArrayList<>();
 
 
     public void addCourse(Courses course) {

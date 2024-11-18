@@ -1,15 +1,10 @@
 package uz.eastwaysolutions.lms.eastwaylms.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.*;
 import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@ToString
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,31 +14,28 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     private String message;
 
     @Column(name = "is_read", nullable = false)
-    private boolean isRead;
+    private boolean isRead = false;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-
     public Notification(Long userId, String message) {
-        this.userId = userId;
+        this.user = new User();
+        this.user.setId(userId);
         this.message = message;
-        this.isRead = false;
+    }
+
+
+    @PrePersist
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean read) {
-        this.isRead = read;
-    }
-
-
-
-
 }
-

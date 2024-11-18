@@ -1,31 +1,36 @@
 package uz.eastwaysolutions.lms.eastwaylms.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uz.eastwaysolutions.lms.eastwaylms.entity.Notification;
 import uz.eastwaysolutions.lms.eastwaylms.service.NotificationService;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/user/notifications")
+@RequestMapping("/api/notifications")
+@RequiredArgsConstructor
 public class NotificationController {
-
 
     private final NotificationService notificationService;
 
-    public NotificationController(NotificationService notificationService) {
-        this.notificationService = notificationService;
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getUserNotifications(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.ok(notificationService.getUserNotifications(userId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch notifications: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/unread")
-    public List<Notification> getUnreadNotifications(@RequestParam Long userId) {
-        return notificationService.getUnreadNotifications(userId);
-    }
 
-    @PutMapping("/mark-as-read")
-    public String markNotificationsAsRead(@RequestBody List<Long> notificationIds) {
-        notificationService.markNotificationsAsRead(notificationIds);
-        return "Notifications marked as read";
+    @PutMapping("/{notificationId}/read")
+    public ResponseEntity<String> markNotificationAsRead(@PathVariable Long notificationId) {
+        try {
+            notificationService.markAsRead(notificationId);
+            return ResponseEntity.ok("Notification marked as read");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to mark notification as read: " + e.getMessage());
+        }
     }
 }
-

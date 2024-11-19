@@ -1,6 +1,7 @@
 package uz.eastwaysolutions.lms.eastwaylms.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,7 +46,7 @@ public class User implements Serializable, UserDetails {
     private List<Courses> courses = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonIgnore
     private List<Notification> notifications = new ArrayList<>();
 
 
